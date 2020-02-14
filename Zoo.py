@@ -1,9 +1,68 @@
 from abc import ABC, abstractmethod  # a module that provides the base for defining Abstract Base Classes "ABC"
-from Strategy import RandomCatBehavior
 import abc
 
-# Create RandomCatBehavior object to use it in Cat class
-RandomBehavior = RandomCatBehavior()
+
+# --------------- Strategy Pattern --------------- #
+class Strategy:  # Strategy Interface
+    __metaclass__ = abc.ABCMeta
+
+    strategy = None
+
+    def setStrategy(self, strategy):
+        self.strategy = strategy
+
+    def sleep(self):
+        self.strategy.execute()
+
+
+class Concrete(Strategy):
+    def __init__(self, name):
+        self.name = name
+
+    def wakeUp(self):
+        print(self.name + " the Cat Woke up")
+
+    def makeNoise(self):
+        print(self.name + " the Cat says meow")
+
+    def eat(self):
+        print(self.name + " the Cat is eating")
+
+    def roam(self):
+        print(self.name + " the Cat is running around")
+
+
+class SleepBehavior:
+    def execute(self):
+        raise NotImplementedError
+
+    __metaclass__ = abc.ABCMeta
+
+
+class ConcreteMewo(SleepBehavior):
+    def __init__(self, name):
+        self.name = name
+
+    def execute(self):
+        print(self.name + " the Cat is mewoing")
+
+
+class ConcreteRun(SleepBehavior):
+    def __init__(self, name):
+        self.name = name
+
+    def execute(self):
+        print(self.name + " the Cat is running around")
+
+
+class ConcreteSleep(SleepBehavior):
+    def __init__(self, name):
+        self.name = name
+
+    def execute(self):
+        print(self.name + " the Cat is sleeping")
+
+# --------------- End of Strategy Pattern --------------- #
 
 
 # ------- Animals Abstract Class -------
@@ -93,17 +152,13 @@ class Lion(Feline):
         print(self.name + " the " + self.__class__.__name__ + " is moaning")
 
 
-class Cat(Feline):  # implements RandomCatBehavior to use it for delegation
+class Cat(Feline):  # Delegates sleep behavior to Strategy
     def __init__(self, name):
         super().__init__(name)
         self.name = name
-        self._behavior = RandomBehavior # Defined previously
 
-    def makeNoise(self):
-        print(self.name + " the " + self.__class__.__name__ + " is mewoing")
 
-    def sleep(self):
-        print(self.name, self._behavior.sleepRandomly())
+# No need to override sleep() method. Strategy will take care of it #
 
 
 # ------- Canine Classes -------
@@ -206,6 +261,8 @@ class ZooAnnouncer(Observer):
     def update(self, message):
         print("Hi, This is the Zoo Announcer. " + message)
 
+# ----------- End of Observer Pattern ----------- #
+
 
 # --------- main method
 def main():
@@ -236,10 +293,25 @@ def main():
     Animals.append(l1)
     Animals.append(l2)
 
+    # ---- Cat delegation ----#
     c1 = Cat("Caleb")
-    c2 = Cat("Chloe")
+    c1 = Concrete("Caleb")
+
+    # Possible Behaviors
+    behavior1 = ConcreteMewo("Caleb")
+    behavior2 = ConcreteRun("Caleb")
+
+    # Set behavior
+    c1.setStrategy(behavior1)
     Animals.append(c1)
+
+    c2 = Cat("Chloe")
+    c2 = Concrete("Chloe")
+    # Possible behavior
+    behavior3 = ConcreteSleep("Chloe")
+    c2.setStrategy(behavior3)
     Animals.append(c2)
+    # ------------ We can change Cat's behavior in run-time ----------#
 
     w1 = Wolf("Wyatt")
     w2 = Wolf("Wade")
