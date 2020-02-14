@@ -7,6 +7,8 @@ Zoo.py: All classes and main methods are in this file:
 3. The Observer Pattern + Zookeeper Class + ZooAnnouncer Class
 4. Main
 
+Output: Output file for Zoo.
+
 Libraries used:
 - abc
 
